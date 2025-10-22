@@ -6,8 +6,8 @@ const dropAllCollections = require("./utils/dropAllCollections");
 
 const request = supertest(app);
 
-const testImageName = "Test";
-const expectedFilePath = "/img/Test.jpeg";
+const testImageName = "test_20251020120000.jpeg";
+const expectedFilePath = "/img/test_20251020120000.jpeg";
 
 // Connects to test database
 beforeAll(async () => {
