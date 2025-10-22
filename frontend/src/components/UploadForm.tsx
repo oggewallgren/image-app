@@ -1,14 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import "./UploadForm.css";
+import { HOST } from '../constants';
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_TYPES = ["image/png", "image/jpeg"]; // png and jpeg
 
-const UploadForm = () => {
+type UploadFormProps = {
+  onUploadSuccess?: () => void;
+};
+
+const UploadForm = ({ onUploadSuccess }: UploadFormProps) => {
   const [imageName, setImageName] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [submitting, setSubmitting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -53,12 +59,38 @@ const UploadForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Not wired to backend per instructions. Simulate successful submit.
     if (!selectedFile || !imageName || error) return;
-    void Promise.resolve({ name: imageName, file: selectedFile });
-    setSelectedFile(null);
-    setPreviewUrl("");
-    setImageName("");
+
+    const ext = selectedFile.type === "image/png" ? "png" : "jpeg";
+    const filename = `${slugifyName(imageName)}_${formatTimestamp(new Date())}.${ext}`;
+
+    const formData = new FormData();
+    formData.append("name", filename);
+    formData.append("photo", selectedFile);
+
+    setSubmitting(true);
+    fetch(`${HOST}/images`, {
+      method: "POST",
+      body: formData,
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.message || `Upload failed (${res.status})`);
+        }
+        return res.json();
+      })
+      .then(() => {
+        setSelectedFile(null);
+        setPreviewUrl("");
+        setImageName("");
+        setError("");
+        onUploadSuccess?.();
+      })
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : "Upload failed");
+      })
+      .finally(() => setSubmitting(false));
   };
 
   const slugifyName = (name: string): string => {
@@ -166,9 +198,9 @@ const UploadForm = () => {
           <button
             type="submit"
             className="primary-btn"
-            disabled={!imageName || !selectedFile || Boolean(error)}
+            disabled={submitting || !imageName || !selectedFile || Boolean(error)}
           >
-            Upload
+            {submitting ? "Uploading..." : "Upload"}
           </button>
         </div>
       </form>

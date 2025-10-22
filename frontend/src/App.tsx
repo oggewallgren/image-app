@@ -1,14 +1,21 @@
 import "./App.css";
+import { useState } from "react";
 import UploadForm from "./components/UploadForm";
 import Gallery from "./components/Gallery";
 
 function App() {
+  const [galleryRefreshKey, setGalleryRefreshKey] = useState(0);
+
+  const handleUploadSuccess = () => {
+    setGalleryRefreshKey((k) => k + 1);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Upload Image</h1>
-        <UploadForm />
-        <Gallery />
+        <UploadForm onUploadSuccess={handleUploadSuccess} />
+        <Gallery refreshKey={galleryRefreshKey} />
       </header>
     </div>
   );
