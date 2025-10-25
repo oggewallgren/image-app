@@ -3,7 +3,7 @@ import { useState } from "react";
 import UploadForm from "./components/UploadForm";
 import Gallery from "./components/Gallery";
 
-function App() {
+const App = () => {
   const [galleryRefreshKey, setGalleryRefreshKey] = useState(0);
 
   const handleUploadSuccess = () => {
@@ -13,12 +13,12 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Upload Image</h1>
+        <h1>Image Uploading App</h1>
         <UploadForm onUploadSuccess={handleUploadSuccess} />
         <Gallery refreshKey={galleryRefreshKey} />
       </header>
     </div>
   );
-}
+};
 
 export default App;

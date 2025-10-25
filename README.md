@@ -184,5 +184,5 @@ The app is now available on `http://localhost:3000`
 - [React](https://reactjs.org/tutorial/tutorial.html)
 - [Multer](https://github.com/expressjs/multer)
 - [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData)
-- [Jest](https://jestjs.io/)
+- [Vitest](https://vitest.dev/)
 - [Supertest](https://www.npmjs.com/package/supertest)

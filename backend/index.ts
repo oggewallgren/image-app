@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const app = require("./app");
+import mongoose from "mongoose";
+import { app } from "./app.js";
 
 const DB_URL = process.env.DB_HOST || "mongodb://127.0.0.1/image-app-db";
 const PORT = process.env.PORT || 3002;
@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3002;
 mongoose
   .connect(DB_URL)
   .then(() => console.log("Database connection established successfully"))
-  .catch((err) => console.error("Error occurred while connecting to DB!"));
+  .catch((_err) => console.error("Error occurred while connecting to DB!"));
 
 // Run the server
 app.listen(PORT, () => {

@@ -1,22 +1,21 @@
-const fs = require("fs");
-const mongoose = require("mongoose");
-const supertest = require("supertest");
-const app = require("../app");
-const dropAllCollections = require("./utils/dropAllCollections");
+import fs from "fs";
+import mongoose from "mongoose";
+import supertest from "supertest";
+import { afterAll, beforeAll, expect, test } from "vitest";
+import { app } from "../app.js";
+import { dropAllCollections } from "./utils/dropAllCollections.js";
 
 const request = supertest(app);
 
 const testImageName = "test_20251020120000.jpeg";
 const expectedFilePath = "/img/test_20251020120000.jpeg";
 
-// Connects to test database
 beforeAll(async () => {
   process.env.ENV = "test";
   const url = `mongodb://127.0.0.1/image-app-test-db`;
   await mongoose.connect(url);
 });
 
-// Clean up test database and drop connection
 afterAll(async () => {
   await dropAllCollections();
   await mongoose.connection.close();
@@ -36,7 +35,6 @@ test("POST /images - upload image", async () => {
 
   const fileExists = fs.existsSync(`public${expectedFilePath}`);
 
-  // Clean up by removing file again
   if (fileExists) {
     fs.unlink(`public${expectedFilePath}`, (err) => {
       if (err) throw err;
